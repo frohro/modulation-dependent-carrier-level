@@ -48,7 +48,7 @@ plt.show()
 
 
     
-![png](README_files/README_2_0.png)
+![png](./README_files/README_2_0.png)
     
 
 
@@ -85,7 +85,7 @@ plt.show()
 
 
     
-![png](README_files/README_4_0.png)
+![png](./README_files/README_4_0.png)
     
 
 
@@ -95,10 +95,10 @@ There are variations on these two themes of MDCL one can dream about.  It is cla
 
 ## Transmitter Operation
 AWR Guam has five ABB SK-52 100 kW transmitters.  They use the standard modulation method, where the B+ high voltage on the plate of the final amplifiers is supplied by the modulator, which produces an amplified version of the output of the MDCL output signal.  By varying this voltage on the plate of the final RF amplifier, the output signal’s amplitude is set.  This is called modulating the transmitter.   See the diagram below.
-![image.png](README_files/7a15b23f-1da7-4afb-b535-59a7445f5a4b.png)
+![image.png](./README_files/7a15b23f-1da7-4afb-b535-59a7445f5a4b.png)
 
 A Pulse Step Modulator (PSM) is used to create the “Audio + DC Carrier Voltage” in the diagram above.  The PSM is essentially like a digital to analog converter where 26 voltage sources are switched in series by digital signals.  It is like a 26 level digital to analog converter with an output of 22 kV maximum.  When the AM transmitter (no MDCL) is sending silence, the PSM puts out 11 kV.  At 100% modulation where the $max (|m(t)|) = 1$, it puts out between 0 and 22 kV as the audio, $m(t)$ goes up and down.  Below is a basic diagram of a PSM.  The switches are controlled digitally and in the SK-52 are gate turn off (GTO) devices.  The blue, green, magenta and orange circular symbols are voltage sources.  (Rob, to avoid copyright, we could replace these when you have your bricked computer back.)
-![image.png](README_files/90877ee8-a0ed-42dd-af39-561d35c40f51.png)
+![image.png](./README_files/90877ee8-a0ed-42dd-af39-561d35c40f51.png)
 
 The most obvious place in the circuit to incorporate a modification to the SK-52 transmitters is in the MDCL board, so YS50 was replaced.  The MDCL board is where something can be incorporated into the circuit to lower the power when a remote Internet connected receiver in the target area indicates the transmitter could cut power without significantly lowering the number of listeners.  We just add one more parameter we can control that multiplies whatever type of audio signal we have by a slowly varying "constant", that changes perhaps every 15 minutes as the signal-to-noise ratio is updated.  If this constant is called $A_{att}$, it would have a maximum value of $1$ for maximum power, and $0.707$ for half power, or $0.5$ for quarter power.  
 
@@ -233,7 +233,7 @@ uint16_t processMDCL(uint16_t one_plus_m_t)
 #### Keeping from Damaging the Transmitter by Asking for Too Much Power
 The PSM manual description of YSE27 (pages 42-44) describe how long a signal that would transmit more than 100 kW is allowed.  You cannot have more than 2500 for longer than 10 mS.  If it happens, then you need to drop to the carrier level (2048) until the signal goes below the carrier level.  At first I was unable to determine if YSE27 was before or after YSE21 (the DCC unit we are replacing) so we wrote a safety routine that kept the MDCL board from violating the conditions needed for a healthy transmitter described there.  There were still possibilities of a bug that this would not catch, so I went back and finally found that YSE21 is before YSE27 in the transmitter.  It makes more sense to put this check at the end of the line, not in the DCC section, so our code was redundant, and was a possible place for bugs.  The block diagram in section 5 of Volume 7 Schematic Diagrams AF Stages (PSM), YSE-27 documents this.  I am removing our redundant code to make the software simpler.  (Rob 9/2/24).  This relieves a fear that we could ask the transmitter for more power than it could handle and it would burn up.
 
-![20240829_155213.jpg](README_files/e0d00265-d990-4567-a2b1-6d4aec44e624.jpg)
+![20240829_155213.jpg](./README_files/e0d00265-d990-4567-a2b1-6d4aec44e624.jpg)
 
 
 #### Screen Modifications
